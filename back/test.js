@@ -21,7 +21,7 @@ app.get('/get',(req,res)=>{
 })
 
 app.get('/three',(req,res)=>{
-    res.sendFile(path.join(__dirname,'../front/three/SJ/text_geo.html'))
+    res.sendFile(path.join(__dirname,'../front/three/SJ/index.html'))
 })
 
 app.listen(app.get('port'),()=>{

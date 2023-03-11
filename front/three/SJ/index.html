@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html>
+<head>
+
+    <meta value="viewport" content="width-device-width,inital-scale=1">
+    <style type="text/css">
+        * {
+    outline: none;
+    margin: 0;
+}
+
+body {
+    overflow: hidden;
+}
+
+#webgl-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+}
+
+#controls{
+    display: flex;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 100px;
+    gap: 1em;
+}
+
+.button{
+    cursor: pointer;
+    background-color: rgba(0, 0, 0, 0.795);
+    color : white;
+    font-size: 1em;
+    border-radius: 0.5em;
+    border : 2px solid white;
+    padding: 1em 0.5em;
+}
+    </style>
+
+    <title>GIS Developer's Three.js Tutorials</title>
+</head>
+<body>
+    <div id="webgl-container"></div>
+
+    <!-- <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.150.1/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.150.1/examples/jsm/"
+            }
+        }
+    </script> -->
+
+
+    <script type="module" defer>
+
+import * as THREE from 'https://unpkg.com/three@0.150.1/build/three.module.js';
+
+class App{
+
+    constructor() {
+
+        const divContainer = document.querySelector("#webgl-container");
+
+        this._divContainer = divContainer;
+
+
+        const renderer = new THREE.WebGLRenderer({antialias:true});
+
+        renderer.setPixelRatio(window.devicePixelRatio);
+
+        divContainer.appendChild(renderer.domElement);
+
+        this._renderer = renderer; 
+
+
+        const scene = new THREE.Scene();
+
+        this._scene = scene;
+
+
+        this._setupCamera();
+        this._setupLight();
+        this._setupModel();
+
+        window.onresize = this.resize.bind(this);
+        this.resize();
+
+
+        requestAnimationFrame(this.render.bind(this));
+    }
+
+
+    _setupCamera(){
+
+        const width = this._divContainer.clientWidth;
+        const height = this._divContainer.clientHeight;
+
+        const camera = new THREE.PerspectiveCamera(
+            75,
+            width / height,
+            0.1,
+            100
+        );
+        camera.position.z = 2;
+        this._camera = camera;
+    }
+    _setupLight(){
+        const color = 0xffffff;
+        const intensity = 1;
+        const light = new THREE.DirectionalLight(color,intensity);
+        light.position.set(-1, 2, 4);
+        this._scene.add(light);
+    }
+
+    _setupModel(){
+
+        const geometry = new THREE.BoxGeometry(1,1,1);
+
+        const Material = new THREE.MeshPhongMaterial({color: 0x44a88});
+
+        const cube = new THREE.Mesh(geometry,Material);
+
+        this._scene.add(cube)
+
+        this._cube = cube;
+    }
+
+    resize(){
+
+        const width = this._divContainer.clientWidth;
+        const height = this._divContainer.clientHeight;
+
+        this._camera.aspect = width / height;
+        this._camera.updateProjectionMatrix();
+
+        this._renderer.setSize(width,height);
+    }
+    
+    render(time){
+
+        this._renderer.render(this._scene, this._camera);
+
+        this.update(time);
+        requestAnimationFrame(this.render.bind(this));
+    }
+
+    update(time){
+        time *= 0.001; 
+        this._cube.rotation.x = time;
+        this._cube.rotation.y = time;
+    }
+
+}
+
+window.onload = function(){
+    new App();
+}
+
+
+    </script>
+</body>
+</html>
